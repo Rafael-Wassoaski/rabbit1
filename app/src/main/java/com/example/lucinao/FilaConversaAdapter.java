@@ -1,6 +1,5 @@
 package com.example.lucinao;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,19 +9,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.BuiltinExchangeType;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Consumer;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
-
-import java.io.IOException;
 import java.util.List;
 
-public class ConversaAdapter extends RecyclerView.Adapter {
+public class FilaConversaAdapter extends RecyclerView.Adapter {
 
     private List<Conversa> conversaList;
 
@@ -32,25 +21,24 @@ public class ConversaAdapter extends RecyclerView.Adapter {
 
     public static class ConversaViewHolder extends RecyclerView.ViewHolder {
 
+        TextView autorTextView;
         TextView msgTextView;
-        TextView vcDizTextView;
 
         public ConversaViewHolder(@NonNull View itemView) {
             super(itemView);
             itemView.setTag(this);
 
 
+            autorTextView = (TextView) itemView.findViewById(R.id.autor);
             msgTextView = (TextView) itemView.findViewById(R.id.msg);
-            vcDizTextView = (TextView) itemView.findViewById(R.id.voce);
-            vcDizTextView.setVisibility(View.INVISIBLE);
-            msgTextView.setVisibility(View.INVISIBLE);
+
 
         }
 
     }
 
 
-    public ConversaAdapter(List<Conversa> conversaList, Acoes acao) {
+    public FilaConversaAdapter(List<Conversa> conversaList, Acoes acao) {
         this.conversaList = conversaList;
         this.acao = acao;
 
@@ -66,7 +54,7 @@ public class ConversaAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_row_fila, parent, false);
         ConversaViewHolder conversa = new ConversaViewHolder(view);
 
 
@@ -74,20 +62,19 @@ public class ConversaAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
 
-        ConversaViewHolder conversaViewHolder = (ConversaViewHolder) holder;
+        ConversaViewHolder conversaViewHolder = (ConversaViewHolder) viewHolder;
 
-        if (conversaList.get(position).getEmissor().equals("Rafael")) {
-            conversaList.get(position).setMsg("[RAFAEL]" + conversaList.get(position).getMsg());
-            ((ConversaViewHolder) holder).vcDizTextView.setText(conversaList.get(position).getMsg());
-            ((ConversaViewHolder) holder).vcDizTextView.setVisibility(View.VISIBLE);
+        ((ConversaViewHolder) conversaViewHolder).autorTextView.setText(conversaList.get(position).getEmissor());
+        ((ConversaViewHolder) conversaViewHolder).msgTextView.setText(conversaList.get(position).getMsg());
+        conversaViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                acao.Responder(viewHolder.getAdapterPosition());
+            }
+        });
 
-            }else{
-
-        ((ConversaViewHolder) holder).msgTextView.setText(conversaList.get(position).getMsg());
-        ((ConversaViewHolder) holder).msgTextView.setVisibility(View.VISIBLE);
-        }
     }
 
 
@@ -96,9 +83,20 @@ public class ConversaAdapter extends RecyclerView.Adapter {
         notifyItemChanged(posicao);
     }
 
+    public int getByEmissor(String emissor){
+
+        for(int i = 0; i < conversaList.size(); i++){
+            if(conversaList.get(i).getEmissor().equals(emissor)){
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public void inserir(Conversa conversa) {
         Log.d("Aguardo", "inici");
-
+            conversa.setEmissor(conversa.getEmissor()+": ");
         try {
             conversaList.add(conversa);
             notifyItemInserted(getItemCount());

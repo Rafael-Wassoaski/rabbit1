@@ -17,6 +17,13 @@ public class Conversa implements Serializable {
         this.suaMsg = suaMsg;
     }
 
+    public Conversa(String emissor, String msg ) {
+        this.emissor = emissor;
+
+        this.msg = msg;
+
+    }
+
     public String getEmissor(){
         return emissor;
     }
@@ -25,11 +32,11 @@ public class Conversa implements Serializable {
         return ipEmissor;
     }
 
-    public String msg(){
+    public String getMsg(){
         return msg;
     }
 
-    public String getMsg(){
+    public String getSuaMsg(){
         return suaMsg;
     }
 

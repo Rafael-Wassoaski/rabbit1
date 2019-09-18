@@ -8,24 +8,13 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerMsgs" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerMsgs"
-        android:layout_width="411dp"
-        android:layout_height="546dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+    <include layout="@layout/grupo"/>
+
+
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+

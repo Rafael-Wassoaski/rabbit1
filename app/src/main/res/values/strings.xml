@@ -1,4 +1,25 @@
 <resources>
-    <string name="app_name">Lucinao</string>
+    <string name="app_name">Teste1</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="titlesTabs">
+        <item>GRUPO</item>
+        <item>FILA</item>
+
+
+    </string-array>
+
+    <string-array name="CODEREC">
+        <item>SECRETÁRIO DE ESTADO - JOÃO BATISTA CORDEIRO</item>
+
+
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <!--<string name="hello_blank_fragment">Hello blank fragment</string>-->
+
+
 </resources>
