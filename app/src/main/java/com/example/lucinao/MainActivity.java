@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements Acoes {
     private static final String EXCHANGE_NAME = "ps";
     public final static String USER = "mqadmin";
     public final static String PASSWD = "mqadmin";
-    public static String HOST = "192.168.0.104";
+    public static String HOST = "192.168.1.105";
     public final static String VHOST = "/";
 
 
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements Acoes {
             public void onClick(View view) {
 
                 try {
-                    EnvioRPS rps = new EnvioRPS();
+                    EnvioRps rps = new EnvioRps();
                     rps.setMessage(mensagemAEnviar.getText().toString());
 
 

@@ -32,20 +32,15 @@ public class responderMsg extends AppCompatActivity {
         final int requestCode = bundle.getInt("request_code");
 
 
-        if(requestCode == 1){
-            //resposta;
 
-            destinatario = bundle.getString("Destino");
-            destinoTextView.setText(destinatario);
-        }
 
         enviar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(destinatario == null){
+
                     destinatario = destinoTextView.getText().toString();
-                }
+
 
 
                     Log.d("Aguardo", "Rodando envio");

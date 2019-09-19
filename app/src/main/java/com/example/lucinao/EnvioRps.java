@@ -11,10 +11,10 @@ import com.rabbitmq.client.ConnectionFactory;
 import static com.example.lucinao.MainActivity.PASSWD;
 import static com.example.lucinao.MainActivity.VHOST;
 
-public class EnvioRPS extends AsyncTask<Void, Void, Void> {
+public class EnvioRps extends AsyncTask<Void, Void, Void> {
 
     private String message ;
-    public EnvioRPS(){}
+    public EnvioRps(){}
 
     public void setMessage(String message){
         this.message = message;
@@ -38,18 +38,17 @@ public class EnvioRPS extends AsyncTask<Void, Void, Void> {
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.exchangeDeclare("ps", BuiltinExchangeType.FANOUT);
+            channel.exchangeDeclare("sata", BuiltinExchangeType.FANOUT);
 
 
 
-            channel.basicPublish("ps", "", null, getMessage().getBytes("UTF-8"));
-            System.out.println(" Mensagem enviada para o grupo " + "ps");
+            channel.basicPublish("sata", "", null, getMessage().getBytes("UTF-8"));
 
             channel.close();
             connection.close();
             Log.d("Aguardo", "Fim do envio");
         } catch (Exception e) {
-            Log.d("Aguardo", e.getClass() + ": " + e.getMessage());
+            Log.d("Aguardo1", e.getClass() + ": " + e.getMessage());
         }
         return null;
     }

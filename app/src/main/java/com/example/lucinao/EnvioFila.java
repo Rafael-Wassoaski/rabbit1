@@ -53,7 +53,7 @@ public class EnvioFila extends AsyncTask<String, String, String> {
             msg = "rafael; " + msg;
 
             channel.basicPublish("", this.QUEUE_NAME, null, msg.getBytes("UTF-8"));
-
+            Log.d("AguardoQ", msg+" "+this.QUEUE_NAME);
             channel.close();
             connection.close();
         } catch (Exception e) {
