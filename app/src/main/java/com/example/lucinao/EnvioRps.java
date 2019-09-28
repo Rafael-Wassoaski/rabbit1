@@ -38,11 +38,11 @@ public class EnvioRps extends AsyncTask<Void, Void, Void> {
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
 
-            channel.exchangeDeclare("sata", BuiltinExchangeType.FANOUT);
+            channel.exchangeDeclare("ps", BuiltinExchangeType.FANOUT);
 
 
 
-            channel.basicPublish("sata", "", null, getMessage().getBytes("UTF-8"));
+            channel.basicPublish("ps", "", null, getMessage().getBytes("UTF-8"));
 
             channel.close();
             connection.close();

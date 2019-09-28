@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements Acoes {
     private static final String EXCHANGE_NAME = "ps";
     public final static String USER = "mqadmin";
     public final static String PASSWD = "mqadmin";
-    public static String HOST = "192.168.1.105";
+    public static String HOST = "192.168.0.104";
     public final static String VHOST = "/";
 
 
@@ -55,11 +55,10 @@ public class MainActivity extends AppCompatActivity implements Acoes {
     private Button novaMsgButton;
 
     public class FilaReceptor extends AsyncTask<Void, Void, Void> {
+//envia na fila
 
-        private Context context;
 
-        public FilaReceptor(Context context) {
-            this.context = context;
+        public FilaReceptor() {
         }
 
 
@@ -77,27 +76,39 @@ public class MainActivity extends AppCompatActivity implements Acoes {
                 Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel();
 
-                channel.queueDeclare("rafael", false, false, false, null);
+                channel.queueDeclare("rafael", true, false, false, null);
 
 
                 Consumer consumer = new DefaultConsumer(channel) {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
                             throws IOException {
+                        Log.d("Aguardo", "Fui chamado na fila");
                         String message = new String(body, "UTF-8");
                         Log.d("Aguardo1", message);
                         String[] emissor = message.split(";");
-                        novaMsgFila escrever = new novaMsgFila(message, emissor[0].trim());
+                        novaMsgFila escrever = new novaMsgFila(emissor[1], emissor[0].trim());
                         Thread thread = new Thread(escrever);
 
                         thread.run();
+
+
                     }
                 };
                 channel.basicConsume("rafael", true, consumer);
 
+                Thread.sleep(5000);
+
+
+
+
+
+
             } catch (Exception e) {
                 Log.d("Aguardo", e.getMessage() + " " + e.getClass());
             }
+
+
 
             return null;
         }
@@ -106,11 +117,9 @@ public class MainActivity extends AppCompatActivity implements Acoes {
 
     public class RunRPS extends AsyncTask<Void, Void, Void> {
         //enviar no grupo
-        private Context context;
 
-        public RunRPS(Context context) {
-            this.context = context;
-        }
+
+        public RunRPS() {                }
 
 
         @Override
@@ -148,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements Acoes {
                     @Override
                     public void handleDelivery(String consumerTag, Envelope envelope,
                                                AMQP.BasicProperties properties, byte[] body) throws IOException {
+                        Log.d("Aguardo", "Fui chamado no grupo");
                         String message = new String(body, "UTF-8");
                         Log.d("Aguardo", message);
                         EscreverMsg escrever = new EscreverMsg(message);
@@ -160,6 +170,10 @@ public class MainActivity extends AppCompatActivity implements Acoes {
                 };
 
                 channel.basicConsume(queueName, true, consumer);
+
+                Thread.sleep(5000);
+
+
             } catch (Exception e) {
                 Log.d("Aguardo", e.getMessage() + " " + e.getClass());
             }
@@ -212,12 +226,46 @@ public class MainActivity extends AppCompatActivity implements Acoes {
             runOnUiThread(new Runnable() {
                 public void run() {
 
-                    conversa.inserir(new Conversa("Rafael", msg));
-
+                    String [] msgFomartada = msg.split(";");
+                    if(msgFomartada[0]!="rafael") {
+                        conversa.inserir(new Conversa(msgFomartada[0], msgFomartada[1]));
+                    }
 
                 }
 
             });
+        }
+    }
+
+
+    public class RunConnections implements Runnable{
+
+
+
+
+        @Override
+        public void run() {
+            RunRPS runRPS = new RunRPS();
+            FilaReceptor filaReceptor = new FilaReceptor();
+
+
+            while(true) {
+
+                filaReceptor.execute();
+                runRPS.execute();
+
+                try {
+                    Thread.sleep(5000);
+
+                    filaReceptor.cancel(true);
+                    runRPS.cancel(true);
+
+                    Thread.sleep(20000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     }
 
@@ -230,13 +278,14 @@ public class MainActivity extends AppCompatActivity implements Acoes {
         setSupportActionBar(toolbar);
 
 
-        RunRPS runRPS = new RunRPS(this);
-        FilaReceptor filaReceptor = new FilaReceptor(this);
 
-        filaReceptor.execute();
-        runRPS.execute();
 
-        setRecyclverView();
+    setRecyclverView();
+        RunRPS runRPS = new RunRPS();
+        FilaReceptor filaReceptor = new FilaReceptor();
+            filaReceptor.execute();
+            runRPS.execute();
+
         botaoEnviar = (Button) findViewById(R.id.enviar);
         mensagemAEnviar = (EditText) findViewById(R.id.msg);
         novaMsgButton = (Button) findViewById(R.id.novaMsg);
